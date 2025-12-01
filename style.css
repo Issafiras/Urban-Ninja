@@ -1346,3 +1346,24 @@
                 transform: translateX(-50%) translateY(20px);
             }
         }
+
+/* Wizard Steps */
+.wizard-step {
+    animation: fadeInStep 0.3s ease-out;
+}
+
+@keyframes fadeInStep {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.hacks-grid .hack-toggle {
+    font-size: 11px;
+    padding: 10px 5px;
+    text-align: center;
+}
+
+.back-button {
+    background: linear-gradient(45deg, #666, #333);
+    border-color: #999;
+}
