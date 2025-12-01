@@ -2470,4 +2470,3 @@ Desktop: Brug genvejstaster for hurtig navigation.
             setStatus('Velkommen til Urban Ninja! Ultimate features: Stealth, Night Vision, Alerts, Voice, Predictive, AR, Offline, Social, Apple & Visual Effects. Tryk H for hjÃ¦lp', 'success');
         }, 1000);
         }
-    </script>
