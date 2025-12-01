@@ -21,8 +21,17 @@ Urban Ninja er pakket med funktioner, du ikke finder i en standard kort-app:
 
 ### 🧭 Avanceret Navigation
 *   **Aggressive Route (A)**: Undgår motorveje for hurtigere bykørsel og "smart" navigation gennem trafikken.
+*   **Urban Ninja Mode (U)**: Den ultimative genvejs-app! Ignorerer byplanlægning og finder ALLE mulige genveje - grusveje, parkeringspladser, lokale stier som kun de lokale kender. Prioriterer dig over byplanlægningen!
+*   **EXTREME Mode (X)**: 🔥 Radikal routing der ignorerer ALLE hastigheder, restriktioner og trafikforhold. Sætter alle vejtyper til samme hastighed og vælger udelukkende korteste fysiske distance. Fjerner alle "penalty" for vejskift og access restriktioner. ⚠️ **Advarsel:** Dette er konceptuel navigation - følg altid gældende love og regler!
+*   **Trafik Integration (T)**: 🚦 Systemet henter og analyserer trafikdata fra Mapbox. Urban Ninja kan vælge ruter der ignorerer trafikpropper for ultimativ hastighed, eller bruge trafikdata til smartere beslutninger.
 *   **Predictive Routing (P)**: AI-inspireret logik der foreslår ruteændringer baseret på simulerede trafikmønstre og tidspunkt på dagen.
 *   **AR Overlay (O)**: Augmented Reality visning der lægger Points of Interest (POI) og navigationspile oven på virkeligheden (simuleret i browser).
+
+### 🔍 Søgefunktioner
+*   **Autocomplete**: Skriv adresse og få forslag automatisk mens du skriver
+*   **Manuel søgning**: Klik 🔍 knappen eller tryk Enter for at søge efter specifikke adresser
+*   **GPS lokation**: "FIND MIG" knappen finder automatisk din nuværende position
+*   **Dansk support**: Alle søgninger optimeret til danske adresser og steder
 
 ### 🤖 Tech Integration
 *   **Voice Commands (C)**: Hænderfri betjening. Sig *"Urban Ninja stealth"* eller *"Urban Ninja find mig"*.
@@ -43,6 +52,12 @@ For den hurtigste betjening, brug følgende genveje på desktop:
 | Tast | Funktion |
 | :---: | :--- |
 | **N** | Toggle Ninja Mode |
+| **U** | Toggle Urban Ninja Mode (alle genveje!) |
+| **X** | Toggle EXTREME routing (ignorerer ALLE restriktioner) |
+| **T** | Opdater trafikdata manuelt |
+| **C** | Gendan kontrolpanel hvis det forsvinder |
+| **Y** | Test routing med København koordinater |
+| **M** | Manuel mission mode (spring over routing) |
 | **L** | Find min position (Locate) |
 | **A** | Toggle Aggressive Route |
 | **R** | Nulstil Rute (Reset) |
@@ -66,6 +81,16 @@ For den hurtigste betjening, brug følgende genveje på desktop:
 ### Forudsætninger
 *   En moderne webbrowser (Chrome, Firefox, Safari, Edge).
 *   En lokal webserver (anbefales for at PWA og Service Workers fungerer korrekt).
+
+### Brug af appen
+1. **Indtast adresser**: Skriv direkte i adressefelterne - vælg fra forslag eller skriv frit (automatisk geocoding)
+2. **Manuel søgning**: Klik 🔍 for at søge efter specifikke adresser
+3. **GPS lokation**: Klik "FIND MIG" for automatisk at finde din position
+4. **Vælg hacks**: Aktiver forskellige modes som Ninja Mode eller Urban Ninja
+5. **Trafik opdatering**: Tryk **T** for at opdatere trafikdata manuelt
+6. **Start mission**: Klik "START MISSION" - koordinater findes automatisk, trafik tages i betragtning
+7. **Navigation**: Følg kortet og instruktionerne med trafikbevidste ruter
+8. **Hvis kontrolpanel forsvinder**: Klik ⚠️ knappen i øverste venstre hjørne eller tryk **C** for at gendanne det
 
 ### Installation & Kørsel
 

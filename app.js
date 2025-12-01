@@ -56,22 +56,20 @@
         // Aggressive is handled via routing options, but we track button for UI if needed
         const aggressiveButton = document.querySelector(".hack-toggle[data-hack='aggressive']") || document.getElementById('aggressiveButton');
 
-        // Search elements (kept for reference but unused in wizard flow logic below)
-        const addressSearch = document.getElementById('addressSearch');
-        const searchButton = document.getElementById('searchButton');
-        const addressSuggestions = document.getElementById('addressSuggestions');
-        const routeTypeRadios = document.querySelectorAll('input[name="routeType"]');
+        // Search elements (using wizard elements)
+        const addressSearch = startInput; // Use start input for search
+        const searchButton = useLocationBtn; // Use location button for search
+        const addressSuggestions = startSuggestions; // Use start suggestions
+        const routeTypeRadios = document.querySelectorAll('.hack-toggle[data-hack]'); // Use hack toggles as route types
 
-        // Advanced Ninja Elements
-        const stealthModeButton = document.getElementById('stealthModeButton');
-        const nightVisionButton = document.getElementById('nightVisionButton');
-        const ninjaAlertsButton = document.getElementById('ninjaAlertsButton');
-
-        // Voice Integration Elements
-        const voiceCommandButton = document.getElementById('voiceCommandButton');
-
-        // Predictive Routing Elements
-        const predictiveRoutingButton = document.getElementById('predictiveRoutingButton');
+        // Advanced Ninja Elements (using data-hack attributes)
+        const stealthModeButton = document.querySelector(".hack-toggle[data-hack='stealth']");
+        const nightVisionButton = document.querySelector(".hack-toggle[data-hack='nightvision']");
+        const ninjaAlertsButton = document.querySelector(".hack-toggle[data-hack='ninja-alerts']");
+        const voiceCommandButton = document.querySelector(".hack-toggle[data-hack='voice']");
+        const predictiveRoutingButton = document.querySelector(".hack-toggle[data-hack='predictive']");
+        const arButton = document.querySelector(".hack-toggle[data-hack='ar']");
+        const socialButton = document.querySelector(".hack-toggle[data-hack='social']");
 
         // Advanced Visual Effects Elements
         const matrixRain = document.getElementById('matrixRain');
@@ -83,11 +81,11 @@
         const arNavigationHint = document.getElementById('arNavigationHint');
 
         // Offline Mode Elements
-        const offlineModeButton = document.getElementById('offlineModeButton');
+        const offlineModeButton = document.querySelector(".hack-toggle[data-hack='offline']");
         const offlineIndicator = document.getElementById('offlineIndicator');
 
         // Social Features Elements
-        const socialModeButton = document.getElementById('socialModeButton');
+        const socialModeButton = socialButton; // Same as social button from hack toggles
         const socialPanel = document.getElementById('socialPanel');
         const shareRouteButton = document.getElementById('shareRouteButton');
         const findBuddiesButton = document.getElementById('findBuddiesButton');
@@ -132,6 +130,7 @@
 
         // Voice Integration State
         let isVoiceCommandActive = false;
+        let isVoiceCommands = false;
         let recognition = null;
         let isListening = false;
 
@@ -152,18 +151,23 @@
 
         // AR Overlay State
         let isAROverlayActive = false;
+        let isARMode = false;
         let arPoiMarkers = [];
         let arInfoTimeout = null;
 
         // Offline Mode State
         let isOfflineModeActive = false;
+        let isOfflineMode = false;
         let isOnline = navigator.onLine;
         let cachedRoutes = [];
+
+        // Social Mode State
+        let isSocialModeActive = false;
+        let isSocialMode = false;
         let cachedTiles = new Map();
         let serviceWorkerRegistration = null;
 
         // Social Features State
-        let isSocialModeActive = false;
         let ninjaBuddies = [];
         let sharedRoutes = [];
         let userStats = {
@@ -739,10 +743,11 @@
             if (wizardState.hacks.has('ninja') && !isNinjaMode) toggleNinjaMode();
             if (wizardState.hacks.has('stealth') && !isStealthMode) toggleStealthMode();
             if (wizardState.hacks.has('nightvision') && !isNightVision) toggleNightVision();
-            if (wizardState.hacks.has('voice') && !isVoiceCommandActive) toggleVoiceCommand();
+            if (wizardState.hacks.has('voice') && !isVoiceCommands) toggleVoiceCommands();
             if (wizardState.hacks.has('predictive') && !isPredictiveRoutingActive) togglePredictiveRouting();
-            if (wizardState.hacks.has('ar') && !isAROverlayActive) toggleAROverlay();
-            if (wizardState.hacks.has('social') && !isSocialModeActive) toggleSocialMode();
+            if (wizardState.hacks.has('ar') && !isARMode) toggleAR();
+            if (wizardState.hacks.has('social') && !isSocialMode) toggleSocial();
+            if (wizardState.hacks.has('offline') && !isOfflineMode) toggleOffline();
         }
 
         function resetMission() {
@@ -764,9 +769,8 @@
             setStatus('Klar til ny mission');
         }
 
-        // Mission Control Buttons
-        const googleMapsBtn = document.getElementById('googleMapsButton');
-        if (googleMapsBtn) googleMapsBtn.addEventListener('click', openInGoogleMaps);
+        // Mission Control Buttons (using existing googleMapsButton)
+        if (googleMapsButton) googleMapsButton.addEventListener('click', openInGoogleMaps);
 
         if (appleModeButton) appleModeButton.addEventListener('click', toggleAppleMode);
 
@@ -862,12 +866,57 @@
             }
         }
 
+        function toggleNinjaMode() {
+            isNinjaMode = !isNinjaMode;
+            document.body.classList.toggle('ninja-mode');
+
+            if (isNinjaMode) {
+                if (ninjaToggle) {
+                    ninjaToggle.textContent = 'NINJA MODE: ON';
+                    ninjaToggle.classList.add('active');
+                }
+                setStatus('Ninja Mode aktiveret - Neon interface!', 'success');
+                showToast('Ninja Mode aktiveret!', 'success');
+            } else {
+                if (ninjaToggle) {
+                    ninjaToggle.textContent = 'NINJA MODE: OFF';
+                    ninjaToggle.classList.remove('active');
+                }
+                setStatus('Ninja Mode deaktiveret', 'success');
+                showToast('Ninja Mode deaktiveret', 'success');
+            }
+        }
+
+        function toggleVoiceCommands() {
+            isVoiceCommands = !isVoiceCommands;
+
+            if (isVoiceCommands) {
+                if (voiceCommandButton) {
+                    voiceCommandButton.textContent = 'VOICE CMD: ON';
+                    voiceCommandButton.classList.add('active');
+                }
+                setStatus('Voice Commands aktiveret - Sig "Urban Ninja"', 'success');
+                showToast('Voice Commands aktiveret!', 'success');
+                startVoiceRecognition();
+            } else {
+                if (voiceCommandButton) {
+                    voiceCommandButton.textContent = 'VOICE CMD: OFF';
+                    voiceCommandButton.classList.remove('active');
+                }
+                setStatus('Voice Commands deaktiveret', 'success');
+                showToast('Voice Commands deaktiveret', 'success');
+                stopVoiceRecognition();
+            }
+        }
+
         function toggleNinjaAlerts() {
             isNinjaAlerts = !isNinjaAlerts;
 
             if (isNinjaAlerts) {
-                ninjaAlertsButton.textContent = 'NINJA ALERTS: ON';
-                ninjaAlertsButton.classList.add('active');
+                if (ninjaAlertsButton) {
+                    ninjaAlertsButton.textContent = 'NINJA ALERTS: ON';
+                    ninjaAlertsButton.classList.add('active');
+                }
                 setStatus('Ninja Alerts aktiveret - OvervÃ¥ger trafikfÃ¦lder', 'success');
                 showToast('Ninja Alerts aktiveret!', 'success');
                 startNinjaAlertMonitoring();
@@ -1134,17 +1183,87 @@ Eksempel: "Urban Ninja stealth"
             isPredictiveRoutingActive = !isPredictiveRoutingActive;
 
             if (isPredictiveRoutingActive) {
-                predictiveRoutingButton.textContent = 'PREDICTIVE ROUTING: ON';
-                predictiveRoutingButton.classList.add('active');
+                if (predictiveRoutingButton) {
+                    predictiveRoutingButton.textContent = 'PREDICTIVE: ON';
+                    predictiveRoutingButton.classList.add('active');
+                }
                 setStatus('Smart predictive routing aktiveret - Optimerer ruter baseret pÃ¥ trafik og tid', 'success');
                 showToast('AI-drevet ruteoptimering aktiveret!', 'success');
                 startPredictiveRouting();
             } else {
-                predictiveRoutingButton.textContent = 'PREDICTIVE ROUTING: OFF';
-                predictiveRoutingButton.classList.remove('active');
+                if (predictiveRoutingButton) {
+                    predictiveRoutingButton.textContent = 'PREDICTIVE: OFF';
+                    predictiveRoutingButton.classList.remove('active');
+                }
                 setStatus('Predictive routing deaktiveret', 'success');
                 showToast('Predictive routing deaktiveret', 'success');
                 stopPredictiveRouting();
+            }
+        }
+
+        function toggleAR() {
+            isARMode = !isARMode;
+
+            if (isARMode) {
+                if (arButton) {
+                    arButton.textContent = 'AR OVERLAY: ON';
+                    arButton.classList.add('active');
+                }
+                arOverlay.style.display = 'block';
+                setStatus('AR Overlay aktiveret - Se navigation i augmented reality', 'success');
+                showToast('AR Navigation aktiveret!', 'success');
+            } else {
+                if (arButton) {
+                    arButton.textContent = 'AR OVERLAY: OFF';
+                    arButton.classList.remove('active');
+                }
+                arOverlay.style.display = 'none';
+                setStatus('AR Overlay deaktiveret', 'success');
+                showToast('AR Overlay deaktiveret', 'success');
+            }
+        }
+
+        function toggleSocial() {
+            isSocialMode = !isSocialMode;
+
+            if (isSocialMode) {
+                if (socialButton) {
+                    socialButton.textContent = 'SOCIAL: ON';
+                    socialButton.classList.add('active');
+                }
+                socialPanel.style.display = 'block';
+                setStatus('Social Ninja Mode aktiveret - Find dine ninja buddies', 'success');
+                showToast('Social Mode aktiveret!', 'success');
+            } else {
+                if (socialButton) {
+                    socialButton.textContent = 'SOCIAL: OFF';
+                    socialButton.classList.remove('active');
+                }
+                socialPanel.style.display = 'none';
+                setStatus('Social Mode deaktiveret', 'success');
+                showToast('Social Mode deaktiveret', 'success');
+            }
+        }
+
+        function toggleOffline() {
+            isOfflineMode = !isOfflineMode;
+
+            if (isOfflineMode) {
+                if (offlineModeButton) {
+                    offlineModeButton.textContent = 'OFFLINE: ON';
+                    offlineModeButton.classList.add('active');
+                }
+                offlineIndicator.style.display = 'block';
+                setStatus('Offline Mode aktiveret - Navigation uden internet', 'success');
+                showToast('Offline Mode aktiveret!', 'success');
+            } else {
+                if (offlineModeButton) {
+                    offlineModeButton.textContent = 'OFFLINE: OFF';
+                    offlineModeButton.classList.remove('active');
+                }
+                offlineIndicator.style.display = 'none';
+                setStatus('Offline Mode deaktiveret', 'success');
+                showToast('Offline Mode deaktiveret', 'success');
             }
         }
 
