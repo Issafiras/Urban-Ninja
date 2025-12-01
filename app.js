@@ -422,7 +422,7 @@
                     map.removeControl(routingControl);
 
                     const newRoutingControl = L.Routing.control({
-                        router: L.Routing.mapbox(MAPBOX_TOKEN, { profile: 'mapbox/driving-traffic', exclude: 'motorway' }),
+                        router: L.Routing.mapbox(MAPBOX_TOKEN, { profile: 'mapbox/driving-traffic' }),
                         waypoints: currentWaypoints,
                         routeWhileDragging: true,
                         createMarker: createRouteMarker,
@@ -835,10 +835,10 @@
                     findUserLocation();
                     speakResponse('Finder din position');
                 }
-            } else if (cleanCommand.includes('aggressive') || cleanCommand.includes('hurtig')) {
+            } else if (cleanCommand.includes('aggressive') || cleanCommand.includes('hurtig') || cleanCommand.includes('smutvej') || cleanCommand.includes('rat run')) {
                 if (!isRouting) {
                     aggressiveButton.click();
-                    speakResponse('Aggressive route aktiveret');
+                    speakResponse('Smutvejs-kongen aktiveret');
                 }
             } else if (cleanCommand.includes('reset') || cleanCommand.includes('nulstil')) {
                 if (!isRouting) {
@@ -893,7 +893,7 @@ VOICE COMMANDS - Sig "Urban Ninja" efterfulgt af:
 â€¢ NIGHT VISION - Toggle night vision
 â€¢ ALERT - Toggle ninja alerts
 â€¢ FIND MIG - Find min position
-â€¢ AGGRESSIVE - Toggle aggressive route
+â€¢ AGGRESSIVE - Toggle Smutvejs-kongen
 â€¢ RESET - Nulstil rute
 â€¢ GOOGLE MAPS - Ã…bn i Google Maps
 â€¢ PREDICTIVE - Toggle predictive routing
@@ -1012,12 +1012,12 @@ Eksempel: "Urban Ninja stealth"
 
                 // Temporarily enable aggressive routing during high traffic
                 if (trafficMultiplier > 1.5) {
-                    showToast(`HÃ¸j trafik detekteret - Skifter til aggressive rute for at spare tid`, 'error');
+                    showToast(`Høj trafik detekteret - Aktiverer Smutvejs-kongen for at finde hurtigste vej`, 'error');
                     aggressiveButton.click();
                 }
             } else if (isAggressive && trafficMultiplier < 1.2) {
                 // Switch back to normal routing when traffic improves
-                showToast(`Trafik normaliseret - Skifter tilbage til normal rute`, 'success');
+                showToast(`Trafik normaliseret - Deaktiverer Smutvejs-kongen`, 'success');
                 aggressiveButton.click();
             }
 
@@ -1059,8 +1059,8 @@ Eksempel: "Urban Ninja stealth"
 
             if (optimalType !== currentType) {
                 const message = optimalType === 'aggressive'
-                    ? 'AI foreslÃ¥r aggressive rute for bedre trafikflow'
-                    : 'AI foreslÃ¥r normal rute - trafik er rolig';
+                    ? 'AI foreslår Smutvejs-kongen for bedre trafikflow'
+                    : 'AI foreslår normal rute - trafik er rolig';
 
                 showToast(message, 'success', 8000);
 
@@ -1943,23 +1943,27 @@ Eksempel: "Urban Ninja stealth"
             }
         });
 
-        // Aggressive Mode Toggle
+        // Rat Run Mode Toggle (Smutvejs-kongen)
         aggressiveButton.addEventListener('click', function() {
             if (isRouting) return; // Prevent multiple clicks while routing
 
             isAggressive = !isAggressive;
             setButtonLoading(aggressiveButton, true);
-            setStatus('Beregner ny rute...', 'loading');
+
+            if (isAggressive) {
+                setStatus('SMUTVEJS-KONGEN: Scanner baggårde, gyder og genveje...', 'loading');
+                showToast('🐀 RAT RUN MODE AKTIVERET: Ignorerer byplanlægning, finder hurtigste vej!', 'success', 5000);
+            } else {
+                setStatus('Beregner standard rute...', 'loading');
+            }
             showProgress();
 
             // Remove current routing control
             map.removeControl(routingControl);
 
             // Create new router with proper configuration
+            // Note: For "Rat Run" we explicitly DO NOT exclude anything to find the absolute fastest path
             const routerOptions = { profile: 'mapbox/driving-traffic' };
-            if (isAggressive) {
-                routerOptions.exclude = 'motorway';
-            }
 
             // Get current waypoints to preserve any custom destination
             const currentWaypoints = routingControl.getWaypoints();
@@ -1981,10 +1985,10 @@ Eksempel: "Urban Ninja stealth"
 
             // Update button appearance and text
             if (isAggressive) {
-                aggressiveButton.textContent = 'AGGRESSIVE ROUTE: ON';
+                aggressiveButton.textContent = 'SMUTVEJS-KONGEN: ON';
                 aggressiveButton.classList.add('active');
             } else {
-                aggressiveButton.textContent = 'AGGRESSIVE ROUTE: OFF';
+                aggressiveButton.textContent = 'SMUTVEJS-KONGEN: OFF';
                 aggressiveButton.classList.remove('active');
             }
         });
@@ -2033,7 +2037,7 @@ Eksempel: "Urban Ninja stealth"
             // Reset aggressive mode
             if (isAggressive) {
                 isAggressive = false;
-                aggressiveButton.textContent = 'AGGRESSIVE ROUTE: OFF';
+                aggressiveButton.textContent = 'SMUTVEJS-KONGEN: OFF';
                 aggressiveButton.classList.remove('active');
             }
 
@@ -2427,7 +2431,7 @@ Eksempel: "Urban Ninja stealth"
 URBAN NINJA - Genveje:
 â€¢ N - Ninja Mode Toggle
 â€¢ L - Find Min Position
-â€¢ A - Aggressive Route Toggle
+â€¢ A - Smutvejs-kongen Toggle
 â€¢ R - Reset Route
 â€¢ G - Ã…bn i Google Maps
 â€¢ S - Stealth Mode Toggle
