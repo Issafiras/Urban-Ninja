@@ -1,0 +1,149 @@
+# 🥷 Urban Ninja
+
+> **Den ultimative navigations-app til byens skygger.**
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Status](https://img.shields.io/badge/Status-Active-success.svg)]()
+[![Platform](https://img.shields.io/badge/Platform-PWA%20%7C%20Web-blue.svg)]()
+
+Urban Ninja er ikke bare en GPS; det er en fuldt udstyret PWA (Progressive Web App) designet til den moderne by-udforsker. Med avancerede funktioner som Augmented Reality (AR), stemmestyring, og en dedikeret "Ninja Mode", forvandler denne app din daglige pendling til en mission.
+
+---
+
+## ✨ Features
+
+Urban Ninja er pakket med funktioner, du ikke finder i en standard kort-app:
+
+### 🕶️ Ninja Modes
+*   **Ninja Mode (N)**: Skifter interfacet til et mørkt, højteknologisk tema med neon-accenter.
+*   **Stealth Mode (S)**: Gør navigationen ultra-diskret. Kortet dæmpes, indtil du bevæger musen.
+*   **Night Vision (V)**: Aktiverer et grønt filter optimeret til natlige operationer.
+
+### 🧭 Avanceret Navigation
+*   **Aggressive Route (A)**: Undgår motorveje for hurtigere bykørsel og "smart" navigation gennem trafikken.
+*   **Predictive Routing (P)**: AI-inspireret logik der foreslår ruteændringer baseret på simulerede trafikmønstre og tidspunkt på dagen.
+*   **AR Overlay (O)**: Augmented Reality visning der lægger Points of Interest (POI) og navigationspile oven på virkeligheden (simuleret i browser).
+
+### 🤖 Tech Integration
+*   **Voice Commands (C)**: Hænderfri betjening. Sig *"Urban Ninja stealth"* eller *"Urban Ninja find mig"*.
+*   **Apple Integration (Y)**: Simulerer CarPlay mode og integration med Siri/Apple Maps.
+*   **Social Ninja (Z)**: Find "buddies" i nærheden og del din rute krypteret.
+*   **Offline Mode (F)**: Cacher ruter og kort-tiles så du kan navigere uden internetforbindelse.
+
+### 🎨 Visuelle Effekter
+*   **Cyberpunk FX (X)**: Matrix-regn, partikel-eksplosioner og glitch-effekter for den rette stemning.
+*   **Pulsating GPS**: Visuel feedback når din position opdateres.
+
+---
+
+## ⌨️ Tastaturgenveje
+
+For den hurtigste betjening, brug følgende genveje på desktop:
+
+| Tast | Funktion |
+| :---: | :--- |
+| **N** | Toggle Ninja Mode |
+| **L** | Find min position (Locate) |
+| **A** | Toggle Aggressive Route |
+| **R** | Nulstil Rute (Reset) |
+| **G** | Åbn rute i Google Maps |
+| **S** | Toggle Stealth Mode |
+| **V** | Toggle Night Vision |
+| **T** | Toggle Ninja Alerts |
+| **C** | Toggle Voice Commands |
+| **P** | Toggle Predictive Routing |
+| **O** | Toggle AR Overlay |
+| **F** | Toggle Offline Mode |
+| **Z** | Toggle Social Mode |
+| **Y** | Toggle Apple Mode |
+| **X** | Trigger Cyberpunk Effects |
+| **H** | Vis Hjælp |
+
+---
+
+## 🚀 Kom i Gang
+
+### Forudsætninger
+*   En moderne webbrowser (Chrome, Firefox, Safari, Edge).
+*   En lokal webserver (anbefales for at PWA og Service Workers fungerer korrekt).
+
+### Installation & Kørsel
+
+1.  **Hent koden:**
+    Download eller klon dette repository til din computer.
+
+2.  **Start en lokal server:**
+    For at få fuldt udbytte af funktionerne (især Service Workers og geolokation), bør appen køres via en server og ikke bare åbnes som en fil.
+
+    Hvis du har Python installeret:
+    ```bash
+    # Python 3
+    python -m http.server 8000
+    ```
+
+    Eller med Node.js (`http-server`):
+    ```bash
+    npx http-server .
+    ```
+
+3.  **Åbn i browseren:**
+    Gå til `http://localhost:8000` (eller den port din server bruger).
+
+### Konfiguration (Mapbox)
+Appen bruger Mapbox til kortdata og routing. Koden kommer med en demo-token, men til seriøs brug bør du oprette din egen:
+
+1.  Opret en konto på [Mapbox.com](https://www.mapbox.com/).
+2.  Generer en ny **Public Access Token**.
+3.  Åbn `app.js` og find linjen:
+    ```javascript
+    const MAPBOX_TOKEN = 'pk.eyJ...'; // Indsæt din token her
+    ```
+4.  Udskift værdien med din egen token.
+
+---
+
+## 🛠️ Teknologier
+
+*   **HTML5 & CSS3**: Responsivt design med CSS Grid/Flexbox og animationer.
+*   **JavaScript (ES6+)**: Vanilla JS uden tunge frameworks.
+*   **Leaflet.js**: Open-source bibliotek til interaktive kort.
+*   **Mapbox GL / Routing API**: Leverer kortdata og trafikbaseret rutevejledning.
+*   **Web APIs**:
+    *   *Geolocation API* til positionering.
+    *   *Web Speech API* til stemmestyring.
+    *   *Service Workers* til offline funktionalitet (PWA).
+    *   *Local Storage* til at gemme indstillinger og stats.
+
+---
+
+## 📱 Mobil & PWA
+
+Urban Ninja er designet som en **Progressive Web App**. Det betyder, at du kan installere den på din telefon:
+
+1.  Åbn siden i Chrome (Android) eller Safari (iOS).
+2.  Vælg "Føj til startskærm" (Add to Home Screen).
+3.  Appen vil nu ligge som et ikon på din telefon og starte i fuld skærm uden browser-bar.
+
+---
+
+## 🤝 Bidrag
+
+Har du idéer til nye features? En "Samurai Mode"? Eller måske bedre partikel-effekter?
+
+1.  Fork projektet.
+2.  Opret en feature branch (`git checkout -b feature/AmazingNinjaSkill`).
+3.  Commit dine ændringer (`git commit -m 'Add Amazing Ninja Skill'`).
+4.  Push til branchen (`git push origin feature/AmazingNinjaSkill`).
+5.  Opret en Pull Request.
+
+---
+
+## 📄 Licens
+
+Dette projekt er distribueret under **MIT Licensen**. Se `LICENSE` filen for flere detaljer.
+
+---
+
+<div align="center">
+  <sub>Built with 💻 and 🥋 by the Urban Ninja Team</sub>
+</div>
