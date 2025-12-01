@@ -1040,11 +1040,6 @@
             } else if (cleanCommand.includes('alert') || cleanCommand.includes('advarsel')) {
                 toggleNinjaAlerts();
                 speakResponse('Ninja alerts aktiveret');
-            } else if (cleanCommand.includes('find mig') || cleanCommand.includes('position')) {
-                if (!isLocating) {
-                    findUserLocation();
-                    speakResponse('Finder din position');
-                }
             } else if (cleanCommand.includes('aggressive') || cleanCommand.includes('hurtig') || cleanCommand.includes('smutvej') || cleanCommand.includes('rat run')) {
                 if (!isRouting) {
                     aggressiveButton.click();
@@ -2209,17 +2204,6 @@ Eksempel: "Urban Ninja stealth"
 
         // (Initial Routing setup removed in favor of wizard)
 
-        // Location tracking functionality
-        let userLocationMarker = null;
-        let isLocating = false;
-
-        // Add event listener to locate button
-        const locateButton = document.getElementById('locateButton');
-        locateButton.addEventListener('click', function() {
-            if (isLocating) return;
-            findUserLocation();
-        });
-
         // Reset route functionality
         resetButton.addEventListener('click', function() {
             if (isRouting) return;
@@ -2392,63 +2376,6 @@ Eksempel: "Urban Ninja stealth"
 
         // Old search listeners removed as they are replaced by wizard inputs
 
-        function findUserLocation() {
-            isLocating = true;
-            setButtonLoading(locateButton, true);
-            setStatus('Finder din position...', 'loading');
-            map.locate({setView: true, maxZoom: 16, watch: false, timeout: 10000});
-        }
-
-        // Handle successful location found
-        map.on('locationfound', function(e) {
-            const radius = e.accuracy / 2;
-
-            // Remove existing marker if it exists
-            if (userLocationMarker) {
-                map.removeLayer(userLocationMarker);
-            }
-
-            // Create pulsating cyan circle marker
-            userLocationMarker = L.circleMarker(e.latlng, {
-                color: '#00FFFF',
-                fillColor: '#00FFFF',
-                fillOpacity: 0.8,
-                radius: 8,
-                weight: 2,
-                className: 'pulsating-circle'
-            }).addTo(map);
-
-            // Add pulsing animation CSS if not already added
-            if (!document.getElementById('pulse-style')) {
-                const style = document.createElement('style');
-                style.id = 'pulse-style';
-                style.textContent = `
-                    .pulsating-circle {
-                        animation: pulse 2s infinite;
-                    }
-                    @keyframes pulse {
-                        0% { transform: scale(1); opacity: 0.8; }
-                        50% { transform: scale(1.2); opacity: 0.4; }
-                        100% { transform: scale(1); opacity: 0.8; }
-                    }
-                `;
-                document.head.appendChild(style);
-            }
-
-            userLocationMarker.bindPopup('<b>Din Position</b><br/>GPS Tracking Aktiv').openPopup();
-            setStatus('Position fundet!', 'success');
-            showToast('Din position er nu vist pÃ¥ kortet', 'success');
-            setButtonLoading(locateButton, false);
-            isLocating = false;
-        });
-
-        // Handle location error
-        map.on('locationerror', function(e) {
-            setStatus('Kunne ikke finde position - tjek GPS', 'error');
-            setButtonLoading(locateButton, false);
-            isLocating = false;
-            console.warn('Location error:', e.message);
-        });
 
         // Keyboard shortcuts
         document.addEventListener('keydown', function(e) {
@@ -2459,10 +2386,6 @@ Eksempel: "Urban Ninja stealth"
                 case 'n':
                     e.preventDefault();
                     ninjaToggle.click();
-                    break;
-                case 'l':
-                    e.preventDefault();
-                    if (!isLocating) locateButton.click();
                     break;
                 case 'a':
                     e.preventDefault();
