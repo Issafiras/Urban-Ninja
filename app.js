@@ -55,7 +55,6 @@
         const ninjaToggle = document.querySelector(".hack-toggle[data-hack='ninja']") || document.getElementById('ninjaToggle');
         // Aggressive is handled via routing options, but we track button for UI if needed
         const aggressiveButton = document.querySelector(".hack-toggle[data-hack='aggressive']") || document.getElementById('aggressiveButton');
-        const resetButton = document.getElementById('resetButton');
 
         // Search elements (kept for reference but unused in wizard flow logic below)
         const addressSearch = document.getElementById('addressSearch');
@@ -1044,11 +1043,6 @@
                 if (!isRouting) {
                     aggressiveButton.click();
                     speakResponse('Smutvejs-kongen aktiveret');
-                }
-            } else if (cleanCommand.includes('reset') || cleanCommand.includes('nulstil')) {
-                if (!isRouting) {
-                    resetButton.click();
-                    speakResponse('Rute nulstillet');
                 }
             } else if (cleanCommand.includes('google') || cleanCommand.includes('maps')) {
                 openInGoogleMaps();
@@ -2204,57 +2198,6 @@ Eksempel: "Urban Ninja stealth"
 
         // (Initial Routing setup removed in favor of wizard)
 
-        // Reset route functionality
-        resetButton.addEventListener('click', function() {
-            if (isRouting) return;
-
-            // Reset aggressive mode
-            if (isAggressive) {
-                isAggressive = false;
-                aggressiveButton.textContent = 'SMUTVEJS-KONGEN: OFF';
-                aggressiveButton.classList.remove('active');
-            }
-
-            // Remove current routing control and create fresh one with default settings
-            map.removeControl(routingControl);
-
-            const defaultRoutingControl = L.Routing.control({
-                router: L.Routing.mapbox(MAPBOX_TOKEN, { profile: 'mapbox/driving-traffic' }),
-                waypoints: [sabro, aarhusC],
-                routeWhileDragging: true,
-                createMarker: createRouteMarker,
-                lineOptions: getLineOptions()
-            }).addTo(map);
-
-            routingControl = defaultRoutingControl;
-            attachRoutingEventHandlers(routingControl);
-
-            // Re-add default markers
-            L.marker(sabro, {
-                icon: L.icon({
-                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
-                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-                    iconSize: [25, 41],
-                    iconAnchor: [12, 41],
-                    popupAnchor: [1, -34],
-                    shadowSize: [41, 41]
-                })
-            }).addTo(map).bindPopup('<b>Sabro</b><br/>Starting Point');
-
-            L.marker(aarhusC, {
-                icon: L.icon({
-                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
-                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-                    iconSize: [25, 41],
-                    iconAnchor: [12, 41],
-                    popupAnchor: [1, -34],
-                    shadowSize: [41, 41]
-                })
-            }).addTo(map).bindPopup('<b>Aarhus C</b><br/>Destination');
-
-            setStatus('Rute nulstillet til Sabro â†’ Aarhus C', 'success');
-            showToast('Rute nulstillet til standard', 'success');
-        });
 
         // Google Maps integration
         googleMapsButton.addEventListener('click', function() {
@@ -2390,10 +2333,6 @@ Eksempel: "Urban Ninja stealth"
                 case 'a':
                     e.preventDefault();
                     if (!isRouting) aggressiveButton.click();
-                    break;
-                case 'r':
-                    e.preventDefault();
-                    if (!isRouting) resetButton.click();
                     break;
                 case 'g':
                     e.preventDefault();

@@ -207,10 +207,6 @@
             box-shadow: 0 0 15px #FF0040;
         }
 
-        #resetButton {
-            margin-top: 8px;
-            background: linear-gradient(45deg, #FF6B6B, #FF4444);
-        }
 
         /* Status indicator */
         .status {
