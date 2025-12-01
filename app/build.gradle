@@ -58,6 +58,9 @@ dependencies {
     // OSMDroid - OpenStreetMap for Android
     implementation 'org.osmdroid:osmdroid-android:6.1.18'
 
+    // OSMBonusPack for routing
+    implementation 'com.github.MKergall:osmbonuspack:6.9.0'
+
     // Location services
     implementation 'androidx.core:core-location:1.0.0-alpha01'
 

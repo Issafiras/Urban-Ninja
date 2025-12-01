@@ -13,14 +13,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import org.osmdroid.config.Configuration
+import org.osmdroid.events.MapEventsReceiver
+import org.osmdroid.events.MapListener
+import org.osmdroid.events.ScrollEvent
+import org.osmdroid.events.ZoomEvent
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Overlay
+import org.osmdroid.views.overlay.Polyline
+import com.urbanninja.navigation.RouteManager
 
 class MainActivity : ComponentActivity() {
+
+    // RouteManager instance for handling routing
+    private val routeManager = RouteManager()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -115,6 +128,10 @@ fun MapViewComposable(
     context: Context,
     ninjaMode: Boolean = false
 ) {
+    // State for current route and destination marker
+    var currentRoute by remember { mutableStateOf<Polyline?>(null) }
+    var destinationMarker by remember { mutableStateOf<Marker?>(null) }
+
     AndroidView(
         modifier = modifier,
         factory = { ctx ->
@@ -122,17 +139,57 @@ fun MapViewComposable(
                 setTileSource(TileSourceFactory.MAPNIK)
                 setMultiTouchControls(true)
 
-                // Center on Aarhus, Denmark (56.1629° N, 10.2039° E)
-                val aarhus = GeoPoint(56.1629, 10.2039)
-                controller.setCenter(aarhus)
+                // Center on Sabro, Denmark (56.2125° N, 10.2506° E) - as mentioned in task
+                val sabro = GeoPoint(56.2125, 10.2506)
+                controller.setCenter(sabro)
                 controller.setZoom(15.0)
 
-                // Add a marker for Aarhus
+                // Add a marker for Sabro (starting point)
                 val marker = Marker(this)
-                marker.position = aarhus
+                marker.position = sabro
                 marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                marker.title = "Aarhus, Denmark"
+                marker.title = "Sabro (Start)"
                 overlays.add(marker)
+
+                // Add MapEventsOverlay for handling long presses
+                val mapEventsReceiver = object : MapEventsReceiver {
+                    override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
+                        return false
+                    }
+
+                    override fun longPressHelper(p: GeoPoint?): Boolean {
+                        p?.let { geoPoint ->
+                            // Clear previous route and destination marker
+                            currentRoute?.let { overlays.remove(it) }
+                            destinationMarker?.let { overlays.remove(it) }
+
+                            // Add destination marker
+                            val destMarker = Marker(this@apply)
+                            destMarker.position = geoPoint
+                            destMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                            destMarker.title = "Destination"
+                            destMarker.icon = ctx.getDrawable(android.R.drawable.ic_menu_mylocation)
+                            overlays.add(destMarker)
+                            destinationMarker = destMarker
+
+                            // Calculate route from Sabro to destination
+                            (ctx as? ComponentActivity)?.lifecycleScope?.launch {
+                                val route = (ctx as MainActivity).routeManager.getRoute(sabro, geoPoint)
+                                route?.let {
+                                    overlays.add(it)
+                                    currentRoute = it
+                                    invalidate()
+                                }
+                            }
+
+                            invalidate()
+                        }
+                        return true
+                    }
+                }
+
+                val mapEventsOverlay = MapEventsOverlay(mapEventsReceiver)
+                overlays.add(mapEventsOverlay)
 
                 // Add dark mode overlay when ninja mode is active
                 if (ninjaMode) {
