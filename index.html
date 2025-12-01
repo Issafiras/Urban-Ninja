@@ -13,124 +13,171 @@
     <!-- Leaflet Routing Machine CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
 
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Courier New', monospace;
-            background: #000;
-            color: #00FFFF;
-            overflow: hidden;
-        }
-
-        #map {
-            width: 100vw;
-            height: 100vh;
-            transition: filter 0.3s ease;
-        }
-
-        /* Ninja Mode - Dark/Hacker Theme */
-        #map.ninja-mode {
-            filter: invert(100%) hue-rotate(180deg) contrast(1.2) brightness(0.8);
-        }
-
-        /* Control Panel */
-        .control-panel {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            background: rgba(0, 0, 0, 0.8);
-            border: 2px solid #00FFFF;
-            border-radius: 10px;
-            padding: 15px;
-            min-width: 200px;
-        }
-
-        .control-panel h2 {
-            margin: 0 0 15px 0;
-            color: #00FFFF;
-            font-size: 18px;
-            text-align: center;
-            text-shadow: 0 0 10px #00FFFF;
-        }
-
-        .ninja-toggle {
-            background: linear-gradient(45deg, #00FFFF, #0080FF);
-            border: none;
-            color: #000;
-            padding: 12px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            font-family: inherit;
-            width: 100%;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .ninja-toggle:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px #00FFFF;
-        }
-
-        .ninja-toggle.active {
-            background: linear-gradient(45deg, #FF0080, #8000FF);
-            box-shadow: 0 0 15px #FF0080;
-        }
-
-        /* Status indicator */
-        .status {
-            margin-top: 10px;
-            text-align: center;
-            font-size: 12px;
-            opacity: 0.8;
-        }
-
-        /* Custom route styling */
-        .leaflet-routing-container {
-            background: rgba(0, 0, 0, 0.9) !important;
-            border: 1px solid #00FFFF !important;
-        }
-
-        .leaflet-routing-container h2,
-        .leaflet-routing-container h3 {
-            color: #00FFFF !important;
-        }
-
-        .leaflet-routing-alt {
-            background: rgba(0, 0, 0, 0.8) !important;
-            border: 1px solid #00FFFF !important;
-        }
-
-        .leaflet-routing-alt:hover {
-            background: rgba(0, 20, 20, 0.9) !important;
-        }
-
-        /* Loading animation */
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-
-        .loading {
-            animation: pulse 1.5s infinite;
-        }
-    </style>
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <!-- Map Container -->
     <div id="map"></div>
 
+    <!-- Advanced Visual Effects -->
+    <div class="matrix-rain" id="matrixRain"></div>
+    <div class="particle-container" id="particleContainer"></div>
+
+    <!-- Augmented Reality Overlay -->
+    <div class="ar-overlay" id="arOverlay">
+        <div class="ar-compass" id="arCompass"></div>
+        <div class="ar-navigation-hint" id="arNavigationHint">AR Navigation: Følg den neon-blå rute</div>
+    </div>
+
+    <!-- Offline Status Indicator -->
+    <div class="offline-indicator" id="offlineIndicator">OFFLINE MODE</div>
+
+    <!-- Social Panel -->
+    <div class="social-panel" id="socialPanel">
+        <h3>🫂 NINJA SOCIAL</h3>
+        <div id="buddyList">
+            <div class="leaderboard-entry">Søger efter ninja buddies...</div>
+        </div>
+        <button class="route-share-button" id="shareRouteButton">🚀 DEL RUTE</button>
+        <button class="route-share-button" id="findBuddiesButton">🎯 FIND BUDDIES</button>
+        <div id="leaderboard">
+            <h4 style="color: #FF1493; margin: 10px 0 5px 0; font-size: 14px;">🥇 LEADERBOARD</h4>
+            <div id="leaderboardContent">
+                <div class="leaderboard-entry gold">🏆 ShadowMaster - 15,420km</div>
+                <div class="leaderboard-entry silver">🥈 NightRunner - 12,890km</div>
+                <div class="leaderboard-entry bronze">🥉 CyberNinja - 11,245km</div>
+                <div class="leaderboard-entry">⚡ StealthFox - 9,876km</div>
+                <div class="leaderboard-entry">🌙 DarkPhantom - 8,543km</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Apple Integration Panel -->
+    <div class="apple-integration-panel" id="appleIntegrationPanel">
+        <h3> APPLE INTEGRATION</h3>
+        <div class="apple-style-card">
+            <strong>Apple Maps</strong><br/>
+            <small>Åbn rute i Apple Maps for ultimativ navigation</small>
+        </div>
+        <button class="apple-maps-button" id="openInAppleMapsButton">🗺️ ÅBN I APPLE MAPS</button>
+        <button class="apple-maps-button" id="shareWithSiriButton">🎤 DEL MED SIRI</button>
+        <button class="apple-maps-button" id="carplayModeButton">🚗 CARPLAY MODE</button>
+    </div>
+
+    <!-- Apple UI Elements -->
+    <div class="carplay-indicator" id="carplayIndicator">CARPLAY ACTIVE</div>
+    <div class="siri-suggestion" id="siriSuggestion">Sig "Hey Siri, start Urban Ninja navigation"</div>
+
     <!-- Control Panel -->
-    <div class="control-panel">
+    <div class="control-panel liquid-button" role="region" aria-label="Urban Ninja Controls">
         <h2>URBAN NINJA</h2>
-        <button id="ninjaToggle" class="ninja-toggle">
+        <button id="ninjaToggle" class="ninja-toggle"
+                aria-label="Toggle Ninja Mode - Press N"
+                title="Toggle mellem normal og ninja mode (Genvej: N)">
             ACTIVATE NINJA MODE
         </button>
-        <div class="status">Routing: Sabro → Aarhus C</div>
+        <button id="locateButton" class="ninja-toggle locate-button"
+                aria-label="Find din position - Press L"
+                title="Find og vis din GPS position (Genvej: L)">
+            FIND MIG
+        </button>
+        <button id="aggressiveButton" class="ninja-toggle aggressive-button"
+                aria-label="Toggle Aggressive Route - Press A"
+                title="Undgå motorveje for hurtigere bykørsel (Genvej: A)">
+            AGGRESSIVE ROUTE: OFF
+        </button>
+        <button id="resetButton" class="ninja-toggle"
+                aria-label="Reset Route - Press R"
+                title="Nulstil ruten til standard (Genvej: R)">
+            RESET ROUTE
+        </button>
+        <button id="googleMapsButton" class="ninja-toggle"
+                aria-label="Åbn i Google Maps - Press G"
+                title="Åbn denne rute i Google Maps (Genvej: G)">
+            ÅBN I GOOGLE MAPS
+        </button>
+
+        <!-- Advanced Ninja Features -->
+        <button id="stealthModeButton" class="ninja-toggle stealth-button"
+                aria-label="Stealth Mode - Press S"
+                title="Aktiver stealth mode for usynlig navigation (Genvej: S)">
+            STEALTH MODE: OFF
+        </button>
+        <button id="nightVisionButton" class="ninja-toggle nightvision-button"
+                aria-label="Night Vision - Press V"
+                title="Aktiver night vision filter (Genvej: V)">
+            NIGHT VISION: OFF
+        </button>
+        <button id="ninjaAlertsButton" class="ninja-toggle alerts-button"
+                aria-label="Ninja Alerts - Press T"
+                title="Aktiver ninja trafik advarsler (Genvej: T)">
+            NINJA ALERTS: OFF
+        </button>
+
+        <!-- Voice Integration -->
+        <button id="voiceCommandButton" class="ninja-toggle voice-button"
+                aria-label="Voice Commands - Press C"
+                title="Aktiver stemmekommandoer for hænderfri navigation (Genvej: C)">
+            VOICE COMMAND: OFF
+        </button>
+
+        <!-- Predictive Routing -->
+        <button id="predictiveRoutingButton" class="ninja-toggle predictive-button"
+                aria-label="Predictive Routing - Press P"
+                title="Aktiver smart predictive routing baseret på tid og trafik (Genvej: P)">
+            PREDICTIVE ROUTING: OFF
+        </button>
+
+        <!-- Augmented Reality Overlay -->
+        <button id="arOverlayButton" class="ninja-toggle ar-button"
+                aria-label="AR Overlay - Press O"
+                title="Aktiver augmented reality overlay med POI information (Genvej: O)">
+            AR OVERLAY: OFF
+        </button>
+
+        <!-- Offline Mode -->
+        <button id="offlineModeButton" class="ninja-toggle offline-button"
+                aria-label="Offline Mode - Press F"
+                title="Aktiver offline mode med cached kort og routes (Genvej: F)">
+            OFFLINE MODE: OFF
+        </button>
+
+        <!-- Social Features -->
+        <button id="socialModeButton" class="ninja-toggle social-button"
+                aria-label="Social Mode - Press Z"
+                title="Aktiver social mode - find buddies og del routes (Genvej: Z)">
+            SOCIAL NINJA: OFF
+        </button>
+
+        <!-- Apple Integration -->
+        <button id="appleModeButton" class="ninja-toggle apple-button"
+                aria-label="Apple Integration - Press Y"
+                title="Aktiver Apple Maps og CarPlay integration (Genvej: Y)">
+            APPLE MODE: OFF
+        </button>
+
+        <!-- Address Search Section -->
+        <div class="search-section">
+            <div style="position: relative;">
+                <input type="text" id="addressSearch" class="address-input"
+                       placeholder="Søg efter adresse..."
+                       aria-label="Søg efter adresse for navigation"
+                       autocomplete="off">
+                <div id="addressSuggestions" class="address-suggestions" role="listbox"></div>
+            </div>
+            <button id="searchButton" class="ninja-toggle search-button"
+                    aria-label="Søg efter adresse"
+                    title="Søg efter adresse og opdater rute">
+                SØG ADRESSE
+            </button>
+        </div>
+
+        <div class="progress-container" id="progressContainer"
+             role="progressbar" aria-label="Routing progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="status" id="status" role="status" aria-live="polite">Routing: Sabro → Aarhus C</div>
     </div>
 
     <!-- Leaflet JS -->
@@ -141,129 +188,7 @@
     <!-- Leaflet Routing Machine JS -->
     <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 
-    <script>
-        // Initialize the map
-        const map = L.map('map').setView([56.208, 10.035], 13);
-
-        // Add OpenStreetMap tiles
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors',
-            maxZoom: 18,
-        }).addTo(map);
-
-        // Define waypoints: Sabro to Aarhus C
-        const sabro = L.latLng(56.208, 10.035);      // Sabro, Denmark
-        const aarhusC = L.latLng(56.1572, 10.2107);   // Aarhus Central Station
-
-        // Create routing control with custom styling
-        const routingControl = L.Routing.control({
-            waypoints: [sabro, aarhusC],
-            routeWhileDragging: true,
-            createMarker: function(i, waypoint, n) {
-                const markerOptions = {
-                    draggable: true,
-                };
-
-                if (i === 0) {
-                    // Start marker (Sabro)
-                    markerOptions.icon = L.icon({
-                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
-                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-                        iconSize: [25, 41],
-                        iconAnchor: [12, 41],
-                        popupAnchor: [1, -34],
-                        shadowSize: [41, 41]
-                    });
-                } else if (i === n-1) {
-                    // End marker (Aarhus C)
-                    markerOptions.icon = L.icon({
-                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
-                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-                        iconSize: [25, 41],
-                        iconAnchor: [12, 41],
-                        popupAnchor: [1, -34],
-                        shadowSize: [41, 41]
-                    });
-                }
-
-                return L.marker(waypoint.latLng, markerOptions);
-            },
-            lineOptions: {
-                styles: [{
-                    color: '#00FFFF',      // Neon Cyan
-                    weight: 6,
-                    opacity: 0.8
-                }, {
-                    color: '#0080FF',      // Slightly darker cyan for outline
-                    weight: 10,
-                    opacity: 0.4
-                }]
-            }
-        }).addTo(map);
-
-        // Ninja Mode Toggle
-        const ninjaToggle = document.getElementById('ninjaToggle');
-        const mapElement = document.getElementById('map');
-        let isNinjaMode = false;
-
-        ninjaToggle.addEventListener('click', function() {
-            isNinjaMode = !isNinjaMode;
-            mapElement.classList.toggle('ninja-mode');
-
-            if (isNinjaMode) {
-                ninjaToggle.textContent = 'DEACTIVATE NINJA MODE';
-                ninjaToggle.classList.add('active');
-                document.body.style.background = '#111';
-                document.querySelector('.control-panel').style.borderColor = '#FF0080';
-                document.querySelector('h2').style.color = '#FF0080';
-                document.querySelector('h2').style.textShadow = '0 0 10px #FF0080';
-            } else {
-                ninjaToggle.textContent = 'ACTIVATE NINJA MODE';
-                ninjaToggle.classList.remove('active');
-                document.body.style.background = '#000';
-                document.querySelector('.control-panel').style.borderColor = '#00FFFF';
-                document.querySelector('h2').style.color = '#00FFFF';
-                document.querySelector('h2').style.textShadow = '0 0 10px #00FFFF';
-            }
-        });
-
-        // Add some visual feedback when routing is calculated
-        routingControl.on('routesfound', function(e) {
-            const routes = e.routes;
-            const summary = routes[0].summary;
-
-            document.querySelector('.status').textContent =
-                `Route: ${Math.round(summary.totalDistance / 1000)}km, ${Math.round(summary.totalTime / 60)}min`;
-        });
-
-        // Handle routing errors gracefully
-        routingControl.on('routingerror', function(e) {
-            console.warn('Routing error:', e.error);
-            document.querySelector('.status').textContent = 'Routing: Error calculating route';
-        });
-
-        // Add markers for start and end points with popups
-        L.marker(sabro, {
-            icon: L.icon({
-                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
-                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-                popupAnchor: [1, -34],
-                shadowSize: [41, 41]
-            })
-        }).addTo(map).bindPopup('<b>Sabro</b><br/>Starting Point');
-
-        L.marker(aarhusC, {
-            icon: L.icon({
-                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
-                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-                popupAnchor: [1, -34],
-                shadowSize: [41, 41]
-            })
-        }).addTo(map).bindPopup('<b>Aarhus C</b><br/>Destination');
-    </script>
+    <!-- Custom JavaScript -->
+    <script src="app.js"></script>
 </body>
 </html>

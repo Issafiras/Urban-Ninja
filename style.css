@@ -1,0 +1,1348 @@
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #00FFFF;
+            overflow: hidden;
+        }
+
+        #map {
+            width: 100vw;
+            height: 100vh;
+            transition: filter 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Ninja Mode - Dark/Hacker Theme */
+        #map.ninja-mode {
+            filter: invert(100%) hue-rotate(180deg) contrast(1.2) brightness(0.8);
+        }
+
+        /* Control Panel */
+        .control-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #00FFFF;
+            border-radius: 10px;
+            padding: 15px;
+            min-width: 200px;
+            max-width: 300px;
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Mobile responsive design */
+        @media (max-width: 768px) {
+            .control-panel {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                min-width: auto;
+                padding: 12px;
+                border-radius: 8px;
+            }
+
+            .control-panel h2 {
+                font-size: 16px !important;
+                margin-bottom: 12px !important;
+            }
+
+            .ninja-toggle {
+                padding: 10px 16px !important;
+                font-size: 14px !important;
+                margin-bottom: 8px !important;
+            }
+
+            .locate-button, .aggressive-button {
+                margin-top: 8px !important;
+            }
+
+            .status {
+                font-size: 11px !important;
+            }
+
+            .search-section {
+                margin-top: 12px !important;
+            }
+
+            .route-type-selector {
+                margin-bottom: 6px !important;
+            }
+
+            .route-type-label {
+                padding: 3px 6px !important;
+                font-size: 10px !important;
+            }
+
+            .address-input {
+                padding: 8px 10px !important;
+                font-size: 13px !important;
+            }
+
+            .search-button {
+                padding: 8px 14px !important;
+                font-size: 12px !important;
+                margin-top: 5px !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .control-panel {
+                padding: 10px;
+            }
+
+            .control-panel h2 {
+                font-size: 14px !important;
+            }
+
+            .route-type-label {
+                font-size: 9px !important;
+                padding: 2px 5px !important;
+            }
+
+            .address-input {
+                font-size: 12px !important;
+                padding: 7px 9px !important;
+            }
+
+            .search-button {
+                padding: 7px 12px !important;
+                font-size: 11px !important;
+            }
+
+            .ninja-toggle {
+                padding: 8px 12px !important;
+                font-size: 12px !important;
+            }
+        }
+
+        .control-panel h2 {
+            margin: 0 0 15px 0;
+            color: #00FFFF;
+            font-size: 18px;
+            text-align: center;
+            text-shadow: 0 0 10px #00FFFF;
+        }
+
+        .ninja-toggle {
+            background: linear-gradient(45deg, #00FFFF, #0080FF);
+            border: none;
+            color: #000;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: inherit;
+            width: 100%;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ninja-toggle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .ninja-toggle:hover::before {
+            left: 100%;
+        }
+
+        .ninja-toggle:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 255, 255, 0.4);
+        }
+
+        .ninja-toggle:active {
+            transform: translateY(0) scale(0.98);
+            transition-duration: 0.1s;
+        }
+
+        .ninja-toggle.active {
+            background: linear-gradient(45deg, #FF0080, #8000FF);
+            box-shadow: 0 0 15px #FF0080;
+        }
+
+        .locate-button {
+            margin-top: 10px;
+        }
+
+        .aggressive-button {
+            margin-top: 10px;
+        }
+
+        .aggressive-button.active {
+            background: linear-gradient(45deg, #FF0040, #800000);
+            box-shadow: 0 0 15px #FF0040;
+        }
+
+        #resetButton {
+            margin-top: 8px;
+            background: linear-gradient(45deg, #FF6B6B, #FF4444);
+        }
+
+        /* Status indicator */
+        .status {
+            margin-top: 10px;
+            text-align: center;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        /* Custom route styling - Ninja/Dark Mode */
+        .leaflet-routing-container {
+            background: rgba(0, 0, 0, 0.95) !important;
+            border: 2px solid #00FFFF !important;
+            border-radius: 8px !important;
+            color: #00FFFF !important;
+            z-index: 999 !important; /* Ensure it doesn't interfere with control panel */
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3) !important;
+        }
+
+        .leaflet-routing-container h2,
+        .leaflet-routing-container h3,
+        .leaflet-routing-container p,
+        .leaflet-routing-container div,
+        .leaflet-routing-container span,
+        .leaflet-routing-container strong,
+        .leaflet-routing-container b {
+            color: #00FFFF !important;
+            text-shadow: 0 0 5px #00FFFF !important;
+        }
+
+        .leaflet-routing-container table,
+        .leaflet-routing-container td,
+        .leaflet-routing-container th {
+            background: rgba(0, 0, 0, 0.95) !important;
+            color: #00FFFF !important;
+            border-color: #00FFFF !important;
+            border-width: 1px !important;
+        }
+
+        .leaflet-routing-container tr:hover {
+            background: rgba(0, 20, 20, 0.95) !important;
+        }
+
+        .leaflet-routing-container tr:hover td {
+            background: rgba(0, 20, 20, 0.95) !important;
+        }
+
+        .leaflet-routing-alt {
+            background: rgba(0, 0, 0, 0.95) !important;
+            border: 2px solid #00FFFF !important;
+            border-radius: 6px !important;
+            color: #00FFFF !important;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.2) !important;
+        }
+
+        .leaflet-routing-alt:hover {
+            background: rgba(0, 20, 20, 0.95) !important;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.4) !important;
+        }
+
+        /* Style the close/minimize button - Enhanced neon effect */
+        .leaflet-routing-container-hide,
+        .leaflet-routing-close-button,
+        .leaflet-routing-minimize-button {
+            background: rgba(0, 0, 0, 0.95) !important;
+            border: 2px solid #00FFFF !important;
+            border-radius: 4px !important;
+            color: #00FFFF !important;
+            box-shadow: 0 0 15px #00FFFF !important;
+            font-weight: bold !important;
+            text-shadow: 0 0 5px #00FFFF !important;
+        }
+
+        .leaflet-routing-container-hide:hover,
+        .leaflet-routing-close-button:hover,
+        .leaflet-routing-minimize-button:hover {
+            background: rgba(0, 20, 20, 0.95) !important;
+            box-shadow: 0 0 25px #00FFFF !important;
+            transform: scale(1.1) !important;
+        }
+
+        /* Ensure all input elements and links are styled */
+        .leaflet-routing-container input,
+        .leaflet-routing-container select,
+        .leaflet-routing-container button,
+        .leaflet-routing-container a {
+            background: rgba(0, 0, 0, 0.9) !important;
+            color: #00FFFF !important;
+            border: 1px solid #00FFFF !important;
+            border-radius: 4px !important;
+        }
+
+        .leaflet-routing-container a:hover {
+            color: #80FFFF !important;
+            text-decoration: underline !important;
+        }
+
+        /* Loading animation */
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .loading {
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Progress indicator */
+        .progress-container {
+            width: 100%;
+            height: 4px;
+            background: rgba(0, 255, 255, 0.2);
+            border-radius: 2px;
+            margin: 5px 0;
+            overflow: hidden;
+            display: none;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #00FFFF, #0080FF);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.3s ease;
+            animation: progress-shine 2s infinite;
+        }
+
+        @keyframes progress-shine {
+            0% { background-position: -100% 0; }
+            100% { background-position: 100% 0; }
+        }
+
+        /* Advanced Ninja Features */
+        .stealth-button.active {
+            background: linear-gradient(45deg, #333333, #111111);
+            box-shadow: 0 0 15px #333333;
+        }
+
+        .nightvision-button.active {
+            background: linear-gradient(45deg, #00FF00, #008000);
+            box-shadow: 0 0 15px #00FF00;
+        }
+
+        .alerts-button.active {
+            background: linear-gradient(45deg, #FF6600, #FF3300);
+            box-shadow: 0 0 15px #FF6600;
+        }
+
+        .voice-button.active {
+            background: linear-gradient(45deg, #9933FF, #6600CC);
+            box-shadow: 0 0 15px #9933FF;
+            animation: voicePulse 2s infinite;
+        }
+
+        @keyframes voicePulse {
+            0% { box-shadow: 0 0 15px #9933FF; }
+            50% { box-shadow: 0 0 25px #9933FF, 0 0 35px #9933FF; }
+            100% { box-shadow: 0 0 15px #9933FF; }
+        }
+
+        .predictive-button.active {
+            background: linear-gradient(45deg, #00CCCC, #009999);
+            box-shadow: 0 0 15px #00CCCC;
+            animation: predictiveGlow 3s infinite;
+        }
+
+        @keyframes predictiveGlow {
+            0% { box-shadow: 0 0 15px #00CCCC; }
+            50% { box-shadow: 0 0 25px #00CCCC, 0 0 35px #00CCCC; }
+            100% { box-shadow: 0 0 15px #00CCCC; }
+        }
+
+        .ar-button.active {
+            background: linear-gradient(45deg, #FF6B00, #FF3300);
+            box-shadow: 0 0 15px #FF6B00;
+            animation: ar-pulse 1s infinite;
+        }
+
+        @keyframes ar-pulse {
+            0% { box-shadow: 0 0 15px #FF6B00; }
+            50% { box-shadow: 0 0 25px #FF6B00, 0 0 35px #FF6B00; }
+            100% { box-shadow: 0 0 15px #FF6B00; }
+        }
+
+        .offline-button.active {
+            background: linear-gradient(45deg, #666666, #333333);
+            box-shadow: 0 0 15px #666666;
+            animation: offline-pulse 2s infinite;
+        }
+
+        @keyframes offline-pulse {
+            0% { box-shadow: 0 0 15px #666666; }
+            50% { box-shadow: 0 0 20px #666666, 0 0 30px #666666; }
+            100% { box-shadow: 0 0 15px #666666; }
+        }
+
+        .social-button.active {
+            background: linear-gradient(45deg, #FF1493, #FF69B4);
+            box-shadow: 0 0 15px #FF1493;
+            animation: social-pulse 2s infinite;
+        }
+
+        @keyframes social-pulse {
+            0% { box-shadow: 0 0 15px #FF1493; }
+            50% { box-shadow: 0 0 25px #FF1493, 0 0 35px #FF1493; }
+            100% { box-shadow: 0 0 15px #FF1493; }
+        }
+
+        .apple-button.active {
+            background: linear-gradient(45deg, #007AFF, #5856D6);
+            box-shadow: 0 0 15px #007AFF;
+            animation: apple-pulse 2s infinite;
+        }
+
+        @keyframes apple-pulse {
+            0% { box-shadow: 0 0 15px #007AFF; }
+            50% { box-shadow: 0 0 25px #007AFF, 0 0 35px #007AFF; }
+            100% { box-shadow: 0 0 15px #007AFF; }
+        }
+
+        /* Apple Integration Elements */
+        .apple-integration-panel {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid #007AFF;
+            border-radius: 15px;
+            padding: 15px;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 0 20px rgba(0, 122, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .apple-integration-panel.active {
+            display: block;
+        }
+
+        .apple-integration-panel h3 {
+            color: #007AFF;
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            text-shadow: 0 0 10px #007AFF;
+            font-weight: 500;
+        }
+
+        .apple-maps-button {
+            background: linear-gradient(45deg, #007AFF, #5856D6);
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            margin: 5px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .apple-maps-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 122, 255, 0.5);
+        }
+
+        .carplay-indicator {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #34C759;
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #34C759;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+            display: none;
+            z-index: 10000;
+        }
+
+        .carplay-indicator.active {
+            display: block;
+        }
+
+        .siri-suggestion {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid #FF3B30;
+            border-radius: 20px;
+            padding: 20px;
+            color: #FF3B30;
+            font-size: 16px;
+            text-align: center;
+            z-index: 10000;
+            display: none;
+            box-shadow: 0 0 30px rgba(255, 59, 48, 0.4);
+            animation: siri-appear 0.5s ease-out;
+        }
+
+        .siri-suggestion.active {
+            display: block;
+        }
+
+        @keyframes siri-appear {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .apple-style-card {
+            background: rgba(142, 142, 147, 0.1);
+            border: 1px solid rgba(142, 142, 147, 0.3);
+            border-radius: 12px;
+            padding: 12px;
+            margin: 8px 0;
+            transition: all 0.3s ease;
+        }
+
+        .apple-style-card:hover {
+            background: rgba(142, 142, 147, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Social Features UI */
+        .social-panel {
+            position: absolute;
+            top: 50%;
+            right: -300px;
+            width: 280px;
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid #FF1493;
+            border-radius: 10px;
+            padding: 15px;
+            z-index: 1000;
+            transition: right 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 20px rgba(255, 20, 147, 0.3);
+            display: none;
+        }
+
+        .social-panel.active {
+            right: 20px;
+            display: block;
+        }
+
+        .social-panel h3 {
+            color: #FF1493;
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            text-shadow: 0 0 10px #FF1493;
+        }
+
+        .buddy-marker {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background: radial-gradient(circle, #FF1493 0%, rgba(255, 20, 147, 0.3) 70%);
+            border: 2px solid #FF1493;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 0 5px black;
+            cursor: pointer;
+            animation: buddy-pulse 3s infinite;
+            box-shadow: 0 0 10px rgba(255, 20, 147, 0.6);
+            z-index: 800;
+        }
+
+        @keyframes buddy-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .route-share-button {
+            background: linear-gradient(45deg, #FF1493, #FF69B4);
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .route-share-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(255, 20, 147, 0.5);
+        }
+
+        .leaderboard-entry {
+            background: rgba(255, 20, 147, 0.1);
+            border: 1px solid rgba(255, 20, 147, 0.3);
+            border-radius: 5px;
+            padding: 8px;
+            margin: 3px 0;
+            font-size: 11px;
+            color: #FF1493;
+        }
+
+        .leaderboard-entry.gold {
+            background: rgba(255, 215, 0, 0.1);
+            border-color: #FFD700;
+            color: #FFD700;
+        }
+
+        .leaderboard-entry.silver {
+            background: rgba(192, 192, 192, 0.1);
+            border-color: #C0C0C0;
+            color: #C0C0C0;
+        }
+
+        .leaderboard-entry.bronze {
+            background: rgba(205, 127, 50, 0.1);
+            border-color: #CD7F32;
+            color: #CD7F32;
+        }
+
+        /* Offline Status Indicator */
+        .offline-indicator {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #666666;
+            border-radius: 5px;
+            padding: 5px 10px;
+            color: #666666;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+            display: none;
+            z-index: 10000;
+        }
+
+        .offline-indicator.online {
+            border-color: #00FF80;
+            color: #00FF80;
+        }
+
+        .offline-indicator.offline {
+            border-color: #FF0040;
+            color: #FF0040;
+            display: block;
+        }
+
+        /* AR Overlay Elements */
+        .ar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9000;
+            display: none;
+        }
+
+        .ar-overlay.active {
+            display: block;
+        }
+
+        .ar-poi-marker {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 107, 0, 0.9);
+            border: 3px solid #FF6B00;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 0 5px black;
+            cursor: pointer;
+            pointer-events: auto;
+            animation: ar-marker-bounce 2s infinite;
+            box-shadow: 0 0 20px rgba(255, 107, 0, 0.6);
+        }
+
+        .ar-poi-marker:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 30px rgba(255, 107, 0, 0.8);
+        }
+
+        @keyframes ar-marker-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .ar-poi-info {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #FF6B00;
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #FF6B00;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+            max-width: 200px;
+            pointer-events: auto;
+            box-shadow: 0 0 15px rgba(255, 107, 0, 0.4);
+            display: none;
+            z-index: 9001;
+        }
+
+        .ar-poi-info.show {
+            display: block;
+        }
+
+        .ar-navigation-hint {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #00FFFF;
+            border-radius: 25px;
+            padding: 15px 25px;
+            color: #00FFFF;
+            font-size: 16px;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            pointer-events: auto;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+            animation: ar-hint-slide 0.5s ease-out;
+        }
+
+        @keyframes ar-hint-slide {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .ar-compass {
+            position: absolute;
+            top: 150px;
+            right: 20px;
+            width: 80px;
+            height: 80px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 3px solid #FF6B00;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: auto;
+            box-shadow: 0 0 15px rgba(255, 107, 0, 0.4);
+        }
+
+        .ar-compass::before {
+            content: 'N';
+            position: absolute;
+            top: 10px;
+            color: #FF6B00;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .ar-compass::after {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 25px;
+            background: #FF6B00;
+            box-shadow: 0 0 5px #FF6B00;
+        }
+
+        /* Advanced Visual Effects - Particle Systems & 3D Elements */
+
+        /* Matrix Rain Effect */
+        .matrix-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            overflow: hidden;
+            display: none;
+        }
+
+        .matrix-rain.active {
+            display: block;
+        }
+
+        .matrix-column {
+            position: absolute;
+            color: #00FFFF;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            opacity: 0.8;
+            animation: matrix-fall linear infinite;
+        }
+
+        @keyframes matrix-fall {
+            0% { transform: translateY(-100vh); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(100vh); opacity: 0; }
+        }
+
+        /* Particle Explosion Effect */
+        .particle-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9998;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: radial-gradient(circle, #00FFFF 0%, transparent 70%);
+            border-radius: 50%;
+            animation: particle-explode 2s ease-out forwards;
+        }
+
+        .particle:nth-child(odd) {
+            background: radial-gradient(circle, #FF0080 0%, transparent 70%);
+        }
+
+        .particle:nth-child(3n) {
+            background: radial-gradient(circle, #8000FF 0%, transparent 70%);
+        }
+
+        @keyframes particle-explode {
+            0% {
+                transform: scale(0) rotate(0deg);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1) rotate(180deg);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(0) rotate(360deg) translate(var(--tx), var(--ty));
+                opacity: 0;
+            }
+        }
+
+        /* 3D Card Effect for Control Panel */
+        .control-panel {
+            transform-style: preserve-3d;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .control-panel:hover {
+            transform: rotateX(5deg) rotateY(5deg) translateZ(20px);
+            box-shadow:
+                0 25px 50px rgba(0, 255, 255, 0.3),
+                0 0 0 1px rgba(0, 255, 255, 0.1);
+        }
+
+        /* Holographic Button Effects */
+        .ninja-toggle {
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+        }
+
+        .ninja-toggle::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(
+                from 0deg,
+                transparent,
+                rgba(0, 255, 255, 0.3),
+                transparent,
+                rgba(255, 0, 128, 0.3),
+                transparent
+            );
+            animation: hologram-rotate 3s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .ninja-toggle:hover::before {
+            opacity: 1;
+        }
+
+        @keyframes hologram-rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Liquid Morphing Effect */
+        .liquid-button {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .liquid-button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: liquid-ripple 0.6s ease-out;
+        }
+
+        .liquid-button:active::after {
+            animation: none;
+            width: 300px;
+            height: 300px;
+            transition: all 0.3s ease;
+        }
+
+        @keyframes liquid-ripple {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 1;
+            }
+            100% {
+                width: 200px;
+                height: 200px;
+                opacity: 0;
+            }
+        }
+
+        /* Neon Glow Animations */
+        .neon-glow {
+            animation: neon-pulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes neon-pulse {
+            0% {
+                text-shadow:
+                    0 0 5px #00FFFF,
+                    0 0 10px #00FFFF,
+                    0 0 15px #00FFFF;
+            }
+            100% {
+                text-shadow:
+                    0 0 10px #00FFFF,
+                    0 0 20px #00FFFF,
+                    0 0 30px #00FFFF,
+                    0 0 40px #00FFFF;
+            }
+        }
+
+        /* Cyberpunk Loading Animation */
+        .cyberpunk-loader {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cyberpunk-loader::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(0, 255, 255, 0.4),
+                rgba(255, 0, 128, 0.4),
+                transparent
+            );
+            animation: cyberpunk-scan 1.5s linear infinite;
+        }
+
+        @keyframes cyberpunk-scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* Glitch Effect for Special Events */
+        .glitch {
+            position: relative;
+            animation: glitch-effect 0.3s linear infinite;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .glitch::before {
+            animation: glitch-1 0.3s linear infinite;
+            color: #FF0080;
+            z-index: -1;
+        }
+
+        .glitch::after {
+            animation: glitch-2 0.3s linear infinite;
+            color: #8000FF;
+            z-index: -2;
+        }
+
+        @keyframes glitch-effect {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        @keyframes glitch-1 {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        @keyframes glitch-2 {
+            0% { transform: translate(0); }
+            20% { transform: translate(2px, -2px); }
+            40% { transform: translate(2px, 2px); }
+            60% { transform: translate(-2px, -2px); }
+            80% { transform: translate(-2px, 2px); }
+            100% { transform: translate(0); }
+        }
+
+        /* Stealth Mode - Ultra Low Visibility */
+        #map.stealth-mode {
+            opacity: 0.1;
+            filter: blur(2px) grayscale(100%);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #map.stealth-mode:hover {
+            opacity: 0.3;
+            filter: blur(1px) grayscale(50%);
+        }
+
+        /* Night Vision Filter */
+        #map.night-vision {
+            filter: sepia(100%) hue-rotate(80deg) saturate(300%) brightness(0.8) contrast(1.2);
+        }
+
+        /* Ninja Alert Markers */
+        .ninja-alert-marker {
+            background: rgba(255, 102, 0, 0.9);
+            border: 2px solid #FF6600;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            position: relative;
+            animation: ninja-alert-pulse 1s infinite;
+        }
+
+        .ninja-alert-marker::before {
+            content: '!';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            text-shadow: 0 0 5px black;
+        }
+
+        @keyframes ninja-alert-pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 102, 0, 0.7); }
+            70% { transform: scale(1.2); box-shadow: 0 0 0 10px rgba(255, 102, 0, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 102, 0, 0); }
+        }
+
+        /* Button states */
+        .button-loading {
+            position: relative;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .button-loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 16px;
+            height: 16px;
+            margin: -8px 0 0 -8px;
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-top: 2px solid #00FFFF;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Status messages */
+        .status.success {
+            color: #00FF80;
+        }
+
+        .status.error {
+            color: #FF0040;
+        }
+
+        .status.loading {
+            color: #FFFF00;
+        }
+
+        /* Address Search Section */
+        .search-section {
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* Route Type Selector */
+        .route-type-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 8px;
+            justify-content: center;
+        }
+
+        .route-type-option {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .route-type-option input[type="radio"] {
+            display: none;
+        }
+
+        .route-type-label {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00FFFF;
+            color: #00FFFF;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-family: inherit;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            text-shadow: 0 0 5px #00FFFF;
+        }
+
+        .route-type-option input[type="radio"]:checked + .route-type-label {
+            background: linear-gradient(45deg, #00FFFF, #0080FF);
+            color: #000;
+            text-shadow: none;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        .route-type-option:hover .route-type-label {
+            border-color: #80FFFF;
+            box-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
+        }
+
+        .address-input {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #00FFFF;
+            border-radius: 5px;
+            color: #00FFFF;
+            padding: 10px 12px;
+            font-family: inherit;
+            font-size: 14px;
+            width: 100%;
+            box-sizing: border-box;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-shadow: 0 0 5px #00FFFF;
+        }
+
+        .address-input:focus {
+            outline: none;
+            border-color: #80FFFF;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+            background: rgba(0, 20, 20, 0.9);
+        }
+
+        .address-input::placeholder {
+            color: rgba(0, 255, 255, 0.6);
+            text-shadow: none;
+        }
+
+        .address-input.error {
+            border-color: #FF0040;
+            box-shadow: 0 0 15px rgba(255, 0, 64, 0.4);
+        }
+
+        .search-button {
+            margin-top: 5px;
+            padding: 10px 16px;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Address Suggestions Dropdown */
+        .address-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid #00FFFF;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1001;
+            display: none;
+            box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+        }
+
+        .address-suggestions.show {
+            display: block;
+        }
+
+        .suggestion-item {
+            padding: 10px 12px;
+            color: #00FFFF;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+            transition: all 0.2s ease;
+            font-size: 13px;
+        }
+
+        .suggestion-item:hover {
+            background: rgba(0, 255, 255, 0.1);
+            color: #80FFFF;
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .suggestion-item.highlighted {
+            background: rgba(0, 255, 255, 0.2);
+            color: #FFFFFF;
+        }
+
+        /* Toast notifications */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid #00FFFF;
+            border-radius: 5px;
+            padding: 10px 15px;
+            color: #00FFFF;
+            font-size: 14px;
+            z-index: 10000;
+            animation: toastSlideUp 0.3s ease-out;
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .toast.success {
+            border-color: #00FF80;
+            color: #00FF80;
+            box-shadow: 0 0 20px rgba(0, 255, 128, 0.3);
+        }
+
+        .toast.error {
+            border-color: #FF0040;
+            color: #FF0040;
+            box-shadow: 0 0 20px rgba(255, 0, 64, 0.3);
+        }
+
+        @keyframes toastSlideUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        @keyframes toastFadeOut {
+            from {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+        }
