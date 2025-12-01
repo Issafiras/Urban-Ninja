@@ -1298,17 +1298,17 @@ Eksempel: "Urban Ninja stealth"
 
         function registerServiceWorker() {
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/sw.js')
+                navigator.serviceWorker.register('sw.js')
                     .then(registration => {
                         serviceWorkerRegistration = registration;
                         console.log('Service Worker registered for offline caching');
                     })
                     .catch(error => {
                         console.error('Service Worker registration failed:', error);
-                        setStatus('Service Worker fejlede - offline caching begrÃ¦nset', 'error');
+                        setStatus('Service Worker fejlede - offline caching begrænset', 'error');
                     });
             } else {
-                setStatus('Service Worker ikke understÃ¸ttet - offline funktioner begrÃ¦nset', 'error');
+                setStatus('Service Worker ikke understøttet - offline funktioner begrænset', 'error');
             }
         }
 
@@ -2470,3 +2470,13 @@ Desktop: Brug genvejstaster for hurtig navigation.
             setStatus('Velkommen til Urban Ninja! Ultimate features: Stealth, Night Vision, Alerts, Voice, Predictive, AR, Offline, Social, Apple & Visual Effects. Tryk H for hjÃ¦lp', 'success');
         }, 1000);
         }
+
+// Tilføj dette i bunden af app.js
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        // Vi fjerner '/' foran sw.js for at det virker på GitHub Pages (som ofte ligger i en undermappe)
+        navigator.serviceWorker.register('sw.js')
+            .then(reg => console.log('Service Worker: Registered (Scope: ' + reg.scope + ')'))
+            .catch(err => console.error('Service Worker: Error:', err));
+    });
+}
