@@ -421,8 +421,13 @@
                     const currentWaypoints = routingControl.getWaypoints();
                     map.removeControl(routingControl);
 
+                    const routerOptions = { profile: 'mapbox/driving-traffic' };
+                    if (isAggressive) {
+                        routerOptions.exclude = 'motorway';
+                    }
+
                     const newRoutingControl = L.Routing.control({
-                        router: L.Routing.mapbox(MAPBOX_TOKEN, { profile: 'mapbox/driving-traffic' }),
+                        router: L.Routing.mapbox(MAPBOX_TOKEN, routerOptions),
                         waypoints: currentWaypoints,
                         routeWhileDragging: true,
                         createMarker: createRouteMarker,
@@ -1962,8 +1967,12 @@ Eksempel: "Urban Ninja stealth"
             map.removeControl(routingControl);
 
             // Create new router with proper configuration
-            // Note: For "Rat Run" we explicitly DO NOT exclude anything to find the absolute fastest path
             const routerOptions = { profile: 'mapbox/driving-traffic' };
+            
+            // Apply aggressive mode settings if active
+            if (isAggressive) {
+                routerOptions.exclude = 'motorway';
+            }
 
             // Get current waypoints to preserve any custom destination
             const currentWaypoints = routingControl.getWaypoints();
